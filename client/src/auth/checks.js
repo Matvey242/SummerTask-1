@@ -1,0 +1,28 @@
+export const OnChangeName = (event, setUsername) => {
+  const value = event.target.value
+  setUsername(value)
+}
+
+export const OnChangeEmail = (event, setEmail) => {
+  const value = event.target.value
+  setEmail(value)
+}
+
+export const OnChangeLogName = (event, setLogUsername) => {
+  const value = event.target.value
+  setLogUsername(value)
+}
+
+export const OnChangePassword = (event, setPassword) => {
+  const value = event.target.value
+  setPassword(value)
+}
+export const OnChangeRepPassword = (event, setRepPassword) => {
+  const value = event.target.value
+  setRepPassword(value)
+}
+
+export const OnChangeLogPassword = (event, setLogPassword) => {
+  const value = event.target.value
+  setLogPassword(value)
+}

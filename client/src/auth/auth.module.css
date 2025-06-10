@@ -1,0 +1,118 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.h1 {
+    font-size: 40px;
+}
+
+.container {
+    width: 600px;
+    height: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.blockName {
+    width: 100%;
+    height: 22%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.blockEmail {
+    width: 100%;
+    height: 22%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.blockPassword {
+    width: 100%;
+    height: 22%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.blockRepPassword {
+    width: 100%;
+    height: 22%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.blockNameL {
+    width: 100%;
+    height: 45%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.blockPasswordL {
+    width: 100%;
+    height: 45%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn {
+    width: 200px;
+    height: 70px;
+    font-size: 30px;
+}
+
+
+.formR {
+    width: 100%;
+    height: 90%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.formL {
+    width: 100%;
+    height: 45%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.btnBlock {
+    width: 100%;
+    height: 20%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.LinkSpan {
+    font-size: 20px;
+}
+
+.Link {
+    text-decoration: none;
+    font-size: 20px;
+}

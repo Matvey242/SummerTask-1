@@ -52,14 +52,15 @@ const userSchema = mongoose.Schema(
 
 // Хеширование пароля перед сохранением
 userSchema.pre('save', async function (next) {
-	if (!this.isModified('password')) return next()
-	this.password = bcrypt.hash(this.password, 10)
-	next()
+  if (!this.isModified('password')) return next()
+  this.password = await bcrypt.hash(this.password, 10)
+  next()
 })
 
+
 // Проверка пароля
-userSchema.methods.correctPassword = async (candidatePassword, userPassword) => {
-	return await bcrypt.compare(candidatePassword, userPassword)
+userSchema.methods.correctPassword = async function (candidatePassword) {
+    return await bcrypt.compare(candidatePassword, this.password)
 }
 
 const User = new mongoose.model('User', userSchema)

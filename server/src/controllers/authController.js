@@ -49,3 +49,49 @@ export const register = async (req, res) => {
 		return res.status(500).json({ message: `Ошибка регистрации: ${err.message}` })
 	}
 }
+
+export const login = async (req, res) => {
+  try {
+  const { username, password } = req.body
+  const user = await User.findOne({ username }).select("+password")
+  if (!user) {
+	return res
+	  .status(401)
+	  .json({ message: 'Пользователь с таким именем не найден' })
+  }
+  if (!(await user.correctPassword(password))) {
+	return res.status(401).json({ message: 'Введён неверный пароль' })
+  }
+
+  const { accessToken, refreshToken } = generateTokens(user._id)
+  user.refreshToken = refreshToken
+  res.setHeader('refresh-token', refreshToken)
+  res
+	.cookie('refreshToken', refreshToken, {
+	  httpOnly: true,
+	  secure: true,
+	  maxAge: 1000 * 60 * 60 * 24 * 7,
+	})
+	.set('Authorization', `Bearer ${accessToken}`)
+	.status(200)
+	.json({
+	  message: 'Пользователь успешно зашел на аккаунт',
+	  _id: user._id,
+	  username: user.username,
+	  email: user.email,
+	})
+} catch (err) {
+	console.log(err)
+	return res.status(500).json({ message: `Ошибка при логине: ${err.message}` })
+}
+}
+
+export const logout = (req, res) => {
+  try {
+    res.clearCookie('refreshToken')
+    res.clearCookie('accessToken')
+    return res.status(200).json({ message: 'Вы вышли из аккаунта' })
+  } catch (err) {
+    return res.status(500).json({ message: `Ошибка при выходе из аккаунта: ${err}` })
+  }
+}
