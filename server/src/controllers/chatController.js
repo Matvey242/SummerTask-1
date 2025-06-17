@@ -89,11 +89,14 @@ export const createMessage = async (req, res) => {
 export const getChatMessages = async (req, res) => {
     try {
         const { chatId } = req.params
+        const curUser = req.user._id
+        const user = await User.findById(curUser)
         const chat = await Chat.findById(chatId).populate('messages')
         const messages = chat.messages.map(message => ({
             _id: message._id,
             text: message.text,
-            created: message.createdAt
+            created: message.createdAt,
+            email: user.email
         }))
         return res.status(200).json(messages)
     } catch (err) {
