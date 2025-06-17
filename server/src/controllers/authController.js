@@ -1,18 +1,9 @@
 import dotenv from 'dotenv'
-import jwt from 'jsonwebtoken'
 import User from '../models/userModel.js'
+import { generateTokens } from '../utils/generateTokens.js'
 
 dotenv.config()
 
-export const generateTokens = id => {
-	const accessToken = jwt.sign({ id }, process.env.JWT_ACCESS_TOKEN_SECRET, {
-		expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRES_IN
-	})
-	const refreshToken = jwt.sign({ id }, process.env.JWT_REFRESH_TOKEN_SECRET, {
-		expiresIn: process.env.JWT_REFRESH_TOKEN_EXPIRES_IN
-	})
-	return { accessToken, refreshToken }
-}
 
 export const register = async (req, res) => {
 	try {
@@ -65,16 +56,17 @@ export const login = async (req, res) => {
 
   const { accessToken, refreshToken } = generateTokens(user._id)
   user.refreshToken = refreshToken
-  res.setHeader('refresh-token', refreshToken)
-  res
-	.cookie('refreshToken', refreshToken, {
-	  httpOnly: true,
-	  secure: true,
-	  maxAge: 1000 * 60 * 60 * 24 * 7,
+	res.cookie('refreshToken', refreshToken, {
+		maxAge: 30 * 24 * 60 * 60 * 1000,
+		httpOnly: true
 	})
-	.set('Authorization', `Bearer ${accessToken}`)
-	.status(200)
-	.json({
+
+	res.cookie('accessToken', accessToken, {
+		maxAge: 10 * 60 * 2000, 
+		httpOnly: true
+	})
+
+	res.json({
 	  message: 'Пользователь успешно зашел на аккаунт',
 	  _id: user._id,
 	  username: user.username,

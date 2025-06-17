@@ -1,10 +1,11 @@
+import bcrypt from 'bcryptjs'
 import mongoose from 'mongoose'
 
 const chatSchema = mongoose.Schema(
 	{
 		title: {
 			type: String,
-			required: true,
+			required: [true, 'Название чата обязательно'],
 			trim: true,
 			minlength: 3,
 			maxlength: 50,
@@ -40,6 +41,19 @@ const chatSchema = mongoose.Schema(
 	}
 )
 
-const Chat = new mongoose.model('Chat', chatSchema)
+chatSchema.pre('save', async function (next) {
+	if (!this.isModified('password')) return next()
+	if (this.password) {
+		const salt = await bcrypt.genSalt(10)
+		this.password = await bcrypt.hash(this.password, salt)
+	}
+	next()
+})
 
+// Проверка пароля
+chatSchema.methods.correctPassword = async (candidatePassword, chatPassword) => {
+	return await bcrypt.compare(candidatePassword, chatPassword)
+}
+
+const Chat = new mongoose.model('Chat', chatSchema)
 export default Chat

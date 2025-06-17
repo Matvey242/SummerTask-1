@@ -6,7 +6,7 @@ import Register from './auth/Register.jsx'
 
 const router = createBrowserRouter([
   {
-    path: '/auth',
+    path: '/',
     element: <Register />,
   },
   {

@@ -1,8 +1,12 @@
+import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import express from 'express'
 import mongoose from 'mongoose'
+import morgan from 'morgan'
+import { errorHandler } from './middlewares/errorMiddleware.js'
 import authRouter from './routes/authRoutes.js'
+import userRouter from './routes/userRoutes.js'
 
 dotenv.config()
 
@@ -16,9 +20,14 @@ app.use(
 		methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']
 	})
 )
+app.use(morgan('dev'))
 app.use(express.json())
+app.use(cookieParser())
 
 app.use('/auth', authRouter)
+app.use('/users', userRouter)
+
+app.use(errorHandler)
 
 app.listen(port, () => {
 	console.log(`Server is running on port ${port}`)

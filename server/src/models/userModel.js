@@ -5,7 +5,7 @@ const userSchema = mongoose.Schema(
 	{
 		username: {
 			type: String,
-			required: true,
+			required: [true, 'Пользователь должен иметь username'],
 			unique: true,
 			trim: true,
 			minlength: 3,
@@ -13,18 +13,18 @@ const userSchema = mongoose.Schema(
 		},
 		email: {
 			type: String,
-			required: true,
+			required: [true, 'Пользователь должен иметь email'],
 			unique: true,
 			trim: true,
 			lowercase: true,
 			match: [
 				/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-				'Please enter a valid email address'
+				'Пожалуйста, введите корректный email'
 			]
 		},
 		password: {
 			type: String,
-			required: true,
+			required: [true, 'Пользователь должен иметь password'],
 			minlength: 6,
 			select: false
 		},
@@ -52,11 +52,11 @@ const userSchema = mongoose.Schema(
 
 // Хеширование пароля перед сохранением
 userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next()
-  this.password = await bcrypt.hash(this.password, 10)
-  next()
+	if (!this.isModified('password')) return next()
+	const salt = await bcrypt.genSalt(10)
+	this.password = await bcrypt.hash(this.password, salt)
+	next()
 })
-
 
 // Проверка пароля
 userSchema.methods.correctPassword = async function (candidatePassword) {
@@ -64,5 +64,4 @@ userSchema.methods.correctPassword = async function (candidatePassword) {
 }
 
 const User = new mongoose.model('User', userSchema)
-
 export default User

@@ -7,9 +7,14 @@ const messageSchema = mongoose.Schema(
 			ref: 'User',
 			required: true
 		},
+		chat: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'Chat',
+			required: true
+		},
 		text: {
 			type: String,
-			required: true,
+			required: [true, 'Сообщение не должно быть пустым'],
 			trim: true,
 			minlength: 1,
 			maxlength: 400
@@ -30,5 +35,4 @@ const messageSchema = mongoose.Schema(
 )
 
 const Message = new mongoose.model('Message', messageSchema)
-
 export default Message
