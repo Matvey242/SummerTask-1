@@ -54,14 +54,14 @@ export const login = async (req, res) => {
 	return res.status(401).json({ message: 'Введён неверный пароль' })
   }
 
-  const { accessToken, refreshToken } = generateTokens(user._id)
-  user.refreshToken = refreshToken
-	res.cookie('refreshToken', refreshToken, {
+  const tokens = generateTokens(user._id)
+  user.refreshToken = tokens.refreshToken
+	res.cookie('refreshToken', tokens.refreshToken, {
 		maxAge: 30 * 24 * 60 * 60 * 1000,
 		httpOnly: true
 	})
 
-	res.cookie('accessToken', accessToken, {
+	res.cookie('accessToken', tokens.accessToken, {
 		maxAge: 10 * 60 * 2000, 
 		httpOnly: true
 	})

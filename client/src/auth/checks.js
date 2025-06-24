@@ -8,9 +8,9 @@ export const OnChangeEmail = (event, setEmail) => {
   setEmail(value)
 }
 
-export const OnChangeLogName = (event, setLogUsername) => {
+export const OnChangeLogName = (event, setUsername) => {
   const value = event.target.value
-  setLogUsername(value)
+  setUsername(value)
 }
 
 export const OnChangePassword = (event, setPassword) => {
@@ -22,7 +22,7 @@ export const OnChangeRepPassword = (event, setRepPassword) => {
   setRepPassword(value)
 }
 
-export const OnChangeLogPassword = (event, setLogPassword) => {
+export const OnChangeLogPassword = (event, setPassword) => {
   const value = event.target.value
-  setLogPassword(value)
+  setPassword(value)
 }

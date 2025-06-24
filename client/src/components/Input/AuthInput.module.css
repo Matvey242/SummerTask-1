@@ -4,4 +4,15 @@
     outline: none;
     font-size: 35px;
     padding: 10px;
+    border-radius: 8px;
+    border: 1px solid black;
+    transition: all 0.2s;
+}
+
+.AuthInput:focus {
+  color: #202327;
+  background-color: white;
+  border-color: #bdbdbd;
+  outline: 0;
+  box-shadow: 0 0 0 3.5px rgba(167, 167, 167, 0.25);
 }
