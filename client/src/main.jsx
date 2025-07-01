@@ -6,6 +6,7 @@ import store from './store/ReduxStore.js'
 import Login from './auth/Login.jsx'
 import Register from './auth/Register.jsx'
 import Main from './pages/mainPage.jsx'
+import ProtectedRoute from './components/protectedRoute.jsx'
 
 const router = createBrowserRouter([
   {
@@ -14,7 +15,11 @@ const router = createBrowserRouter([
   },
   {
     path: '/users',
-    element: <Main />,
+    element: (
+      <ProtectedRoute>
+        <Main />
+      </ProtectedRoute>
+    ),
   },
   {
     path: '/auth/login',

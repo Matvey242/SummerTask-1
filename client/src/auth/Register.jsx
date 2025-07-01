@@ -1,7 +1,6 @@
 import { useState } from "react"
 import styles from './auth.module.css'
 import AuthInput from "../components/Input/AuthInput.jsx"
-import { handleRegister } from "./userRequests.js"
 import { NavLink } from "react-router"
 import {
     OnChangeName,
@@ -9,12 +8,15 @@ import {
     OnChangePassword,
     OnChangeRepPassword,
 } from './checks.js'
+import { useDispatch } from "react-redux"
+import { registerUser } from "../store/slices/authSlice.js"
 
 function Register() {
     const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [repPassword, setRepPassword] = useState('')
+    const dispatch = useDispatch()
 
 
     return (
@@ -30,12 +32,9 @@ function Register() {
                 <div className={styles["blockPassword"]}>
                     <AuthInput type='password' placeholder='Password' value={password} onChange={(event) => OnChangePassword(event, setPassword)} />
                 </div>
-                <div className={styles["blockRepPassword"]}>
-                    <AuthInput type='password' placeholder='Repeat password' value={repPassword} onChange={(event) => OnChangeRepPassword(event, setRepPassword)} />
-                </div>
             </form>
             <div className={styles["btnBlock"]}>
-                <button className={styles["btn"]} onClick={(e) => handleRegister({ username, email, password })}>Register</button>
+                <button className={styles["btn"]} onClick={() => dispatch(registerUser({ username, email, password }))}>Register</button>
                 <span className={styles["LinkSpan"]}>Have an account? <NavLink to='/auth/login' className={styles['Link']}>Log In</NavLink></span>
             </div>
         </div>

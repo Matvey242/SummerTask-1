@@ -10,6 +10,9 @@ export const createChat = async (req, res) => {
     try {
         const { title, privacy, password } = req.body
         const curUser = req.user._id
+        if (privacy === 'private' && !password) {
+			throw new Error('Для создания приватного чата необходимо указать пароль')
+		}
         const chat = await Chat.create({ title, privacy, password })
          await User.findByIdAndUpdate(
             req.user._id,
@@ -51,39 +54,64 @@ export const getChatById = async (req, res) => {
     }
 }
 
-export const joinChat = async (req, res) => {
-    try {
-        const { id } = req.body
-        const chat = await Chat.findOne({ _id: id })
-        const curUser = req.user._id
-        const UpdChat = await Chat.findByIdAndUpdate(
-            chat,
-            { $push: { members: curUser } }
-        )
-         await User.findByIdAndUpdate(
-            req.user._id,
-            { $push: { chats: chat._id } }
-        )
-         return res.status(200).json({ message: 'Вы присоединились к чату', UpdChat })
-    } catch (err) {
-        return res.status(500).json({ message: `Ошибка при входе в чат: ${err.message}` })
-    }
+export const joinPublicChat = async (req, res, next) => {
+	try {
+		const chatId = req.params.id
+		const userId = req.user._id
+
+		const chat = await Chat.findById(chatId)
+
+		if (!chat) {
+			res.status(404)
+			throw new Error('Чат не найден')
+		}
+
+		if (chat.members.includes(userId)) {
+			res.status(200).json('Вы успешно зашли в чат')
+		} else {
+			chat.members.push(userId)
+			await chat.save()
+			res.status(200).json('Вы успешно присоединилсь к чату')
+		}
+	} catch (err) {
+		next(err)
+	}
 }
 
-export const createMessage = async (req, res) => {
-    try {
-        const { text } = req.body
-        const { chatId } = req.params
-        const authorId = req.user._id
-        const message = await Message.create({ text, author: authorId, chat: chatId })
-        await Chat.findByIdAndUpdate(
-            chatId,
-            { $push: { messages: message._id } }
-        )
-        return res.status(200).json({ message: 'Сообщение создано', message })
-    } catch (err) {
-        return res.status(500).json({ message: `Ошибка при создании сообщения: ${err.message}` })
-    }
+export const joinPrivateChat = async (req, res, next) => {
+	try {
+		const chatId = req.params.id
+		const { password } = req.body
+		const userId = req.user._id
+
+		const chat = await Chat.findById(chatId).select('+password')
+		if (!chat) {
+			res.status(404)
+			throw new Error('Чат не найден')
+		}
+
+		if (chat.privacy !== 'private') {
+			res.status(400)
+			throw new Error('Это не приватный чат')
+		}
+
+		const isMatch = await chat.correctPassword(password, chat.password)
+
+		if (!isMatch) {
+			res.status(401)
+			throw new Error('Неверный пароль')
+		}
+
+		if (!chat.members.includes(userId)) {
+			chat.members.push(userId)
+			await chat.save()
+			await User.findByIdAndUpdate(userId, { $push: { chats: chat._id } })
+		}
+
+		res.status(200).json({ message: 'Вы успешно присоединились к чату' })
+	} catch (err) {
+		next(err)
+	}
 }
 
 export const getChatMessages = async (req, res) => {

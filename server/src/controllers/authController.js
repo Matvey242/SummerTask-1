@@ -6,40 +6,43 @@ dotenv.config()
 
 
 export const register = async (req, res) => {
-	try {
-		const { username, email, password } = req.body
-		const userExists =
-			(await User.findOne({ email })) || (await User.findOne({ username }))
+  try {
+    const { username, email, password } = req.body
+    const userExists =
+      (await User.findOne({ email })) || (await User.findOne({ username }))
 
-		if (userExists) {
-			return res.status(400).json({
-				message: 'Пользователь с таким email и(-или) username уже зарегистрирован'
-			})
-		}
+    if (userExists) {
+      return res.status(400).json({
+        message: 'Пользователь с таким email и(-или) username уже зарегистрирован'
+      })
+    }
 
-		const user = await User.create({ username, email, password })
-		const tokens = generateTokens(user._id)
+    const user = await User.create({ username, email, password })
+    const tokens = generateTokens(user._id)
 
-		res.cookie('refreshToken', tokens.refreshToken, {
-			maxAge: 30 * 24 * 60 * 60 * 1000, // 30 дней
-			httpOnly: true
-		})
+    res.cookie('refreshToken', tokens.refreshToken, {
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 дней
+      httpOnly: true
+    })
 
-		res.cookie('accessToken', tokens.accessToken, {
-			maxAge: 10 * 60 * 1000, // 10 минут
-			httpOnly: true
-		})
+    res.cookie('accessToken', tokens.accessToken, {
+      maxAge: 10 * 60 * 1000, // 10 минут
+      httpOnly: true
+    })
 
-		return res.status(201).json({
-			_id: user._id,
-			username: user.username,
-			email: user.email
-		})
-	} catch (err) {
-		console.log(err)
-		return res.status(500).json({ message: `Ошибка регистрации: ${err.message}` })
-	}
+    return res.status(201).json({
+      _id: user._id,
+      username: user.username,
+      email: user.email,
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken 
+    })
+  } catch (err) {
+    console.log(err)
+    return res.status(500).json({ message: `Ошибка регистрации: ${err.message} `})
+  }
 }
+
 
 export const login = async (req, res) => {
   try {
@@ -71,6 +74,8 @@ export const login = async (req, res) => {
 	  _id: user._id,
 	  username: user.username,
 	  email: user.email,
+    accessToken: tokens.accessToken,
+    refreshToken: tokens.refreshToken 
 	})
 } catch (err) {
 	console.log(err)

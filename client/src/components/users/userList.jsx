@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { getUsers } from '../../store/slices/userSlices.js'
+import { getUsers } from '../../store/slices/usersSlice.js'
 import styles from './users.module.css'
 
 const UserList = ({ setUser }) => {

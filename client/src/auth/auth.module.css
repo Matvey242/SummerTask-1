@@ -8,6 +8,9 @@ html,
 body {
   height: 100%;
   width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .h1 {
@@ -17,20 +20,16 @@ body {
 .container {
     width: 600px;
     height: 600px;
-    position: absolute;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
     gap: 20px;
-    margin-top: 22%;
-    margin-left: 50%;
-    transform: translate(-50%, -50%);
 }
 
 .blockName {
     width: 100%;
-    height: 22%;
+    height: 34%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -38,7 +37,7 @@ body {
 
 .blockEmail {
     width: 100%;
-    height: 22%;
+    height: 33%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -46,15 +45,7 @@ body {
 
 .blockPassword {
     width: 100%;
-    height: 22%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.blockRepPassword {
-    width: 100%;
-    height: 22%;
+    height: 33%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -81,12 +72,13 @@ body {
     height: 70px;
     font-size: 30px;
     border-radius: 8px;
+    cursor: pointer;
 }
 
 
 .formR {
     width: 100%;
-    height: 90%;
+    height: 50%;
     display: flex;
     flex-direction: column;
     justify-content: center;
