@@ -1,4 +1,5 @@
 import cookieParser from 'cookie-parser'
+import cors from 'cors'
 import dotenv from 'dotenv'
 import express from 'express'
 import http from 'http'
@@ -11,11 +12,9 @@ import Message from './models/messageModel.js'
 import authRouter from './routes/authRoutes.js'
 import chatRouter from './routes/chatRoutes.js'
 import userRouter from './routes/userRoutes.js'
-import cors from 'cors'
 
 dotenv.config()
 
-// Подключение к MongoDB
 mongoose
 	.connect(process.env.MONGO_URI)
 	.then(() => {
@@ -27,12 +26,7 @@ mongoose
 
 const app = express()
 
-app.use(cors({
-    origin: 'http://localhost:5173',
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-}))
-
+app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }))
 app.use(morgan('dev'))
 app.use(express.json())
 app.use(cookieParser())
@@ -47,11 +41,7 @@ const port = process.env.PORT || 3000
 const server = http.createServer(app)
 
 const io = new IOServer(server, {
-	cors: {
-		origin: '*',
-		credentials: true,
-		methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']
-	}
+	cors: { origin: process.env.CLIENT_URL, credentials: true }
 })
 
 io.on('connection', socket => {
@@ -73,6 +63,7 @@ io.on('connection', socket => {
 
 	// отправка сообщения
 	socket.on('sendMessage', async ({ chatId, authorId, text }) => {
+		console.log('Получено сообщение:', { chatId, authorId, text })
 		try {
 			const message = await Message.create({
 				author: authorId,
@@ -81,12 +72,12 @@ io.on('connection', socket => {
 			})
 
 			await Chat.findByIdAndUpdate(chatId, { updatedAt: Date.now() })
-			await Chat.findByIdAndUpdate(chatId, { $push: { messages: message } })
-
 			const fullMessage = await Message.findById(message._id).populate(
 				'author',
 				'username'
 			)
+
+			await Chat.findByIdAndUpdate(chatId, { $push: { messages: fullMessage } })
 
 			io.to(chatId).emit('newMessage', fullMessage)
 		} catch (err) {

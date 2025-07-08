@@ -7,7 +7,7 @@ const chatSchema = mongoose.Schema(
 			type: String,
 			required: [true, 'Название чата обязательно'],
 			trim: true,
-			minlength: 3,
+			minlength: 2,
 			maxlength: 50,
 			default: 'New Chat'
 		},

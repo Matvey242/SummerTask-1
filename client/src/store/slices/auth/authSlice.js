@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { loginUserAPI, registerUserAPI } from './authAPI'
+import { loginUserAPI, registerUserAPI, checkAuthAPI } from './authAPI'
 const ValidEmail = (email) => /^[^\s()<>@,;:\/]+@\w[\w\.-]+\.[a-z]{2,}$/i.test(email)
 
 export const loginUser = createAsyncThunk(
@@ -48,54 +48,68 @@ export const registerUser = createAsyncThunk(
   }
 )
 
+export const checkAuth = createAsyncThunk('auth/checkAuth', async () => {
+	return await checkAuthAPI()
+})
+
 const authSlice = createSlice({
-  name: 'auth',
-  initialState: {
-    user: null,
-    accessToken: localStorage.getItem('accessToken'),
-    refreshToken: localStorage.getItem('refreshToken'),
-    status: 'idle',
-    error: null
-  },
-  reducers: {
-    logout: state => {
+	name: 'auth',
+	initialState: {
+		user: null,
+		status: 'idle',
+		error: null
+	},
+	reducers: {
+		logout: state => {
 			state.user = null
-      state.accessToken = null
-      state.refreshToken = null
-      localStorage.removeItem('accessToken')
-      localStorage.removeItem('refreshToken')
 		},
-    setUser: (state, action) => {
+		// ?
+		setUser: (state, action) => {
 			state.user = action.payload
 		}
-  },
-  extraReducers: builder => {
-    builder
-      .addCase(loginUser.fulfilled, (state, action) => {
-        state.user = action.payload
-        state.accessToken = localStorage.setItem('accessToken', action.payload.accessToken)
-        state.refreshToken = localStorage.setItem('refreshToken', action.payload.refreshToken)
-        state.status = 'succeeded'
-        state.error = null
-      })
-      .addCase(loginUser.rejected, (state, action) => {
-        state.error = action.error.message
-        state.status = 'failed'
-        state.user = null
-      })
-      .addCase(registerUser.fulfilled, (state, action) => {
-        state.user = action.payload
-        state.accessToken = localStorage.setItem('accessToken', action.payload.accessToken)
-        state.refreshToken = localStorage.setItem('refreshToken', action.payload.refreshToken)
-        state.status = 'succeeded'
-        state.error = null
-      })
-      .addCase(registerUser.rejected, (state, action) => {
-        state.error = action.error.message
-        state.status = 'failed'
-        state.user = null
-      })
-  }
+	},
+	extraReducers: builder => {
+		builder
+			.addCase(loginUser.fulfilled, (state, action) => {
+				state.user = action.payload
+				state.status = 'succeeded'
+				state.error = null
+			})
+			.addCase(loginUser.pending, state => {
+				state.status = 'loading'
+			})
+			.addCase(loginUser.rejected, (state, action) => {
+				state.error = action.error.message
+				state.status = 'failed'
+				state.user = null
+			})
+			.addCase(registerUser.fulfilled, (state, action) => {
+				state.user = action.payload
+				state.status = 'succeeded'
+				state.error = null
+			})
+			.addCase(registerUser.pending, state => {
+				state.status = 'loading'
+			})
+			.addCase(registerUser.rejected, (state, action) => {
+				state.error = action.error.message
+				state.status = 'failed'
+				state.user = null
+			})
+			.addCase(checkAuth.pending, state => {
+				state.status = 'loading'
+			})
+			.addCase(checkAuth.fulfilled, (state, action) => {
+				state.user = action.payload
+				state.status = 'succeeded'
+				state.error = null
+			})
+			.addCase(checkAuth.rejected, (state, action) => {
+				state.error = action.error.message
+				state.status = 'failed'
+				state.user = null
+			})
+	}
 })
 
 

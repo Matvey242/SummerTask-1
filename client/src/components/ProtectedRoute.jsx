@@ -1,21 +1,20 @@
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router'
-import { useSelector } from 'react-redux'
+import { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { Navigate, Outlet } from 'react-router'
+import { checkAuth } from '../store/slices/auth/authSlice'
 
-export default function ProtectedRoute({ children }) {
-  const nav = useNavigate()
-  const { accessToken } = useSelector((state) => state.auth)
-  const [loading, setLoading] = useState(true)
+const ProtectedRoute = () => {
+	const dispatch = useDispatch()
+	const { user, status } = useSelector(state => state.auth)
 
-  useEffect(() => {
-    if (!accessToken) {
-      nav('/auth/register')
-      setLoading(false)
-    } else {
-      nav('/users')
-    }
-    setLoading(false)
-  }, [accessToken, nav])
-  if (loading) return <div>Loading...</div>
-  return accessToken ? children : null
+	useEffect(() => {
+		if (status === 'idle') dispatch(checkAuth())
+	}, [dispatch, status])
+
+	if (status === 'idle' || status === 'loading') return <p>Loading...</p>
+	if (!user) return <Navigate to='/login' replace />
+
+	return <Outlet />
 }
+
+export default ProtectedRoute

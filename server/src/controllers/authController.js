@@ -83,6 +83,22 @@ export const login = async (req, res) => {
 }
 }
 
+export const checkAuth = async (req, res, next) => {
+	try {
+		if (!req.user) {
+			res.status(401)
+			throw new Error('Вы не авторизованы')
+		}
+		res.json({
+			_id: req.user._id,
+			username: req.user.username,
+			email: req.user.email
+		})
+	} catch (err) {
+		next(err)
+	}
+}
+
 export const logout = (req, res) => {
   try {
     res.clearCookie('refreshToken')

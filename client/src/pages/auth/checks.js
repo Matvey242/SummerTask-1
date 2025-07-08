@@ -26,3 +26,13 @@ export const OnChangeLogPassword = (event, setPassword) => {
   const value = event.target.value
   setPassword(value)
 }
+
+export const setTitle = (event, setChatTitle) => {
+  const value = event.target.value
+  setChatTitle(value)
+}
+
+export const setPassword = (event, setChatPassword) => {
+  const value = event.target.value
+  setChatPassword(value)
+}

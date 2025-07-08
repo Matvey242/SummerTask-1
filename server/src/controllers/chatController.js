@@ -1,63 +1,70 @@
-import dotenv from 'dotenv'
-import User from '../models/userModel.js'
 import Chat from '../models/chatModel.js'
 import Message from '../models/messageModel.js'
-import { response } from 'express'
+import User from '../models/userModel.js'
 
-dotenv.config()
+export const createChat = async (req, res, next) => {
+	try {
+		const { title, privacy, password, members } = req.body
 
-export const createChat = async (req, res) => {
-    try {
-        const { title, privacy, password } = req.body
-        const curUser = req.user._id
-        if (privacy === 'private' && !password) {
+		if (privacy === 'private' && !password) {
 			throw new Error('Для создания приватного чата необходимо указать пароль')
 		}
-        const chat = await Chat.create({ title, privacy, password })
-         await User.findByIdAndUpdate(
+
+		const chat = await Chat.create({ title, privacy, password, members })
+		await User.updateMany({ _id: { $in: members } }, { $push: { chats: chat._id } })
+
+		res.status(201).json(chat)
+	} catch (err) {
+		next(err)
+	}
+}
+
+export const createPublicChat = async (req, res, next) => {
+	try {
+		const { title, privacy, password } = req.body
+
+		if (privacy === 'private' && !password) {
+			throw new Error('Для создания приватного чата необходимо указать пароль')
+		}
+
+		const chat = await Chat.create({ title, privacy, password })
+		await User.findByIdAndUpdate(
             req.user._id,
             { $push: { chats: chat._id } }
         )
         await Chat.findByIdAndUpdate(
             chat._id,
-            { $push: { members: curUser } }
+            { $push: { members: req.user._id } }
         )
-        return res.status(201).json({
-            _id: chat._id,
-            title: chat.title,
-            privacy: chat.privacy
-        })
-    } catch (err) {
-        return res.status(500).json({ message: `Ошибка при создании чата: ${err.message}` })
-    }
+
+		res.status(201).json(chat)
+	} catch (err) {
+		next(err)
+	}
 }
 
+export const getMyChats = async (req, res, next) => {
+	try {
+		const userId = req.user._id
+		const chats = await Chat.find({ members: userId })
 
-export const getMyChats = async (req, res) => {
-    try {
-        const curUserId = req.user._id
-        const user = await User.findById(curUserId).populate('chats')
- 		res.status(200).json(user.chats)
-    } catch (err) {
-        return res.status(500).json({ message: `Ошибка при получении чатов: ${err.message}` })
-    }
-}
+		if (!chats) {
+			throw new Error('Чаты не найдены')
+		}
 
-
-export const getChatById = async (req, res) => {
-    try {
-        const { id } = req.body
-        const chat = await Chat.findOne({ _id: id })
-        res.status(200).json(chat)
-    } catch (err) {
-        return res.status(500).json({ message: `Ошибка при получении чатов по id: ${err.message}` })
-    }
+		//? Подумать, что передавать
+		res.status(200).json(chats)
+	} catch (err) {
+		next(err)
+	}
 }
 
 export const joinPublicChat = async (req, res, next) => {
 	try {
 		const chatId = req.params.id
 		const userId = req.user._id
+
+		console.log(chatId, userId)
 
 		const chat = await Chat.findById(chatId)
 
@@ -67,11 +74,11 @@ export const joinPublicChat = async (req, res, next) => {
 		}
 
 		if (chat.members.includes(userId)) {
-			res.status(200).json('Вы успешно зашли в чат')
+			res.status(200).json(chat._id)
 		} else {
 			chat.members.push(userId)
 			await chat.save()
-			res.status(200).json('Вы успешно присоединилсь к чату')
+			res.status(200).json(chat._id)
 		}
 	} catch (err) {
 		next(err)
@@ -114,20 +121,25 @@ export const joinPrivateChat = async (req, res, next) => {
 	}
 }
 
-export const getChatMessages = async (req, res) => {
-    try {
-        const { chatId } = req.params
-        const curUser = req.user._id
-        const user = await User.findById(curUser)
-        const chat = await Chat.findById(chatId).populate('messages')
-        const messages = chat.messages.map(message => ({
-            _id: message._id,
-            text: message.text,
-            created: message.createdAt,
-            email: user.email
-        }))
-        return res.status(200).json(messages)
-    } catch (err) {
-        return res.status(500).json({ message: `Ошибка при получении сообщений: ${err.message}` })
-    }
+export const getChatMessages = async (req, res, next) => {
+	try {
+		const chatId = req.params.id
+		const userId = req.user._id
+
+		const chat = await Chat.findById(chatId)
+		if (!chat) {
+			res.status(404)
+			throw new Error('Чат не найден')
+		}
+		if (!chat.members.includes(userId)) {
+			res.status(403)
+			throw new Error('У вас нет доступа к этому чату')
+		}
+
+		const messages = await Message.find({ chat: chatId })
+
+		res.status(200).json(messages)
+	} catch (err) {
+		next(err)
+	}
 }

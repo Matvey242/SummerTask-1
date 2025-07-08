@@ -1,13 +1,13 @@
 import { useState } from "react"
 import styles from './auth.module.css'
-import AuthInput from "../components/Input/AuthInput"
+import AuthInput from "../../components/Input/AuthInput.jsx"
 import { NavLink } from "react-router"
 import {
     OnChangeLogName,
     OnChangeLogPassword
 } from './checks.js'
 import { useDispatch } from "react-redux"
-import { loginUser } from "../store/slices/authSlice.js"
+import { loginUser } from "../../store/slices/auth/authSlice.js"
 
 
 function Login() {
@@ -28,7 +28,7 @@ function Login() {
         </form>
         <div className={styles["btnBlock"]}>
         <button className={styles["btn"]} onClick={() => dispatch(loginUser({ username, password }))}>Log In</button>
-        <span className={styles["LinkSpan"]}>Dont have an accout? <NavLink to='/auth/register' className={styles['Link']}>Register</NavLink></span>
+        <span className={styles["LinkSpan"]}>Dont have an accout? <NavLink to='/register' className={styles['Link']}>Register</NavLink></span>
         </div>
     </div>
  )
