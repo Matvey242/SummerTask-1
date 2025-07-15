@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Form, useNavigate } from 'react-router'
-import { createChat, joinPublicChat, fetchChats } from '../../store/slices/chat/chatSlice'
-import { createPublicChat, fetchPubChats, joinPubPrivateChat, joinPubPublicChat, setCurrentPubChat } from '../../store/slices/chat/publicChatSlice'
+import { createChat, joinPublicChat, fetchChats, createGeneralChat, setCurrentChat } from '../../store/slices/chat/chatSlice'
 import { getAllUsers } from '../../store/slices/users/usersSlice'
 import styles from './mainPage.module.css'
 import { setPassword, setTitle } from '../auth/checks'
@@ -12,8 +11,7 @@ const HomePage = () => {
 	const navigate = useNavigate()
 	const { user } = useSelector(state => state.auth)
 	const { users } = useSelector(state => state.users)
-	const { chats } = useSelector(state => state.chat)
-	const { pubChats, currentPubChat } = useSelector(state => state.pubChat)
+	const { chats, currentChat } = useSelector(state => state.chat)
 	const [chatList, setChatList] = useState(false)
 	const [userList, setUserList] = useState(true)
 	const [inputList, setInputList] = useState(false)
@@ -35,16 +33,8 @@ const HomePage = () => {
 				alert(err.message)
 			}
 		}
-		const getPubChats = async () => {
-			try {
-				await dispatch(fetchPubChats()).unwrap()
-			} catch (err) {
-				alert(err.message)
-			}
-		}
 		fetchUsers()
 		getChats()
-		getPubChats()
 	}, [dispatch])
 
 
@@ -52,7 +42,7 @@ const HomePage = () => {
 		setChatList(true)
 		setUserList(false)
 		setInputList(false)
-		await dispatch(fetchPubChats()).unwrap()
+		await dispatch(fetchChats()).unwrap()
 	}
 
 	const showUserList = async () => {
@@ -68,19 +58,17 @@ const HomePage = () => {
 		setInputList(true)
 	}
 
-	const startPubChat = async () => {
+	const startGeneralChat = async () => {
 		try {
 			const updPrivacy = chatPassword ? 'private' : 'public'
 			const createdChat = await dispatch(
-				createPublicChat({
+				createGeneralChat({
 					title: chatTitle,
 					password: chatPassword,
 					privacy: updPrivacy
 				})
 			).unwrap()
-			alert('Чат создан')
 			const chatId = createdChat._id
-			await dispatch(joinPubPublicChat(chatId)).unwrap()
 			navigate(`/chat/${chatId}`)
 		} catch (err) {
 			alert(err.message)
@@ -118,25 +106,8 @@ const HomePage = () => {
 
 const joinChat = async () => {
     try {
-        const curChatId = currentPubChat._id
-        const chat = pubChats.find(chat => chat._id == curChatId)
-
-        if (!chat) {
-           return alert('Чат не найден')
-        }
-
-        if (chat.privacy == 'public') {
-            await dispatch(joinPubPublicChat(curChatId)).unwrap()
-            navigate(`/chat/${curChatId}`)
-        } else if (chat.privacy == 'private') {
-            const passwordP = prompt('Введите пароль')
-            if (passwordP === chat.password) {
-                await dispatch(joinPubPrivateChat({ chatId: curChatId, password: passwordP })).unwrap()
-                navigate(`/chat/${curChatId}`)
-            } else {
-                alert('Неверный пароль')
-            }
-        }
+        const curChatId = currentChat._id
+		navigate(`/chat/${curChatId}`)
     } catch (err) {
         alert(err.message)
     }
@@ -166,9 +137,9 @@ const joinChat = async () => {
 				: ''}
 				{chatList ? (
 					<ul className={styles['list']}>
-						{pubChats.map(pubChat => (
+						{chats.map(pubChat => (
 							<li key={pubChat._id}>
-								<div onClick={() => dispatch(setCurrentPubChat(pubChat))} className={styles["ChatLi"]}>{pubChat.title}<button onClick={joinChat} className={styles['joinBtn']}>Зайти</button></div>
+								<div onClick={() => dispatch(setCurrentChat(pubChat))} className={styles["ChatLi"]}>{pubChat.title}<button onClick={joinChat} className={styles['joinBtn']}>Зайти</button></div>
 							</li>
 						))}
 					</ul>
@@ -176,9 +147,9 @@ const joinChat = async () => {
 			: ''}
 			    {inputList ? (
 					<form className={styles['chatForm']} action='#'>
-						<input value={chatTitle} onChange={(event) => setTitle(event, setChatTitle)} type='text' className={styles['inputTitle']}></input>
-						<input value={chatPassword} onChange={(event) => setPassword(event, setChatPassword)} type='password' className={styles['inputPassword']}></input>
-						<button onClick={() => startPubChat()} className={styles['createBtn']}>Создать</button>
+						<input placeholder='Название' value={chatTitle} onChange={(event) => setTitle(event, setChatTitle)} type='text' className={styles['inputTitle']}></input>
+						<input placeholder='Пароль' value={chatPassword} onChange={(event) => setPassword(event, setChatPassword)} type='password' className={styles['inputPassword']}></input>
+						<button onClick={() => startGeneralChat()} className={styles['createBtn']}>Создать</button>
 					</form>
 			    ) : ''}
 				</div>

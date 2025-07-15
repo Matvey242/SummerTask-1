@@ -1,15 +1,19 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router'
+import { useNavigate, useParams } from 'react-router'
 import { useSocket } from '../../context/useSocket.js'
 import {
 	addMessage,
 	fetchMessages,
+	joinPrivateChat,
+	joinPublicChat,
 	setCurrentChat
 } from '../../store/slices/chat/chatSlice.js'
+import { getChatByIdAPI } from '../../store/slices/chat/chatAPI.js'
 import styles from './mainPage.module.css'
 
 const ChatPage = () => {
+	const navigate = useNavigate()
 	const { chatId } = useParams()
 	const dispatch = useDispatch()
 	const socket = useSocket()
@@ -19,10 +23,29 @@ const ChatPage = () => {
 	const [input, setInput] = useState('')
 	const [log, setLog] = useState([])
 
-	useEffect(() => {
+    useEffect(() => {
 		if (!chatId) return
-		dispatch(fetchMessages(chatId))
-		dispatch(setCurrentChat(chatId))
+
+		const fetchChatData = async () => {
+			try {
+				const chat = await getChatByIdAPI(chatId)
+				if (chat.privacy === 'private') {
+					const password = prompt('Введите пароль для приватного чата')
+					if (!password) return navigate(`/`)
+						await dispatch(joinPrivateChat({ chatId, password })).unwrap()
+				} else {
+					await dispatch(joinPublicChat(chatId)).unwrap()
+				}
+
+				dispatch(setCurrentChat(chat))
+				dispatch(fetchMessages(chatId))
+			} catch (err) {
+				alert('Введен неверный пароль')
+				navigate('/')
+			}
+		}
+
+		fetchChatData()
 	}, [chatId, dispatch])
 
 	useEffect(() => {

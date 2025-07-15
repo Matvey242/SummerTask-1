@@ -24,8 +24,7 @@ const chatSchema = mongoose.Schema(
 			}
 		],
 		password: {
-			type: String,
-			select: false
+			type: String
 		},
 		messages: [
 			{

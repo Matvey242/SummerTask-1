@@ -6,11 +6,9 @@ import store from './store/ReduxStore'
 import { SocketProvider } from './context/SocketProvider'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-	<React.StrictMode>
 		<Provider store={store}>
 			<SocketProvider>
 				<App />
 			</SocketProvider>
 		</Provider>
-	</React.StrictMode>
 )

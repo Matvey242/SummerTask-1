@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import {
 	createChatAPI,
+	createPublicChatAPI,
 	fetchChatsAPI,
 	fetchMessagesAPI,
 	joinPrivateChatAPI,
@@ -19,6 +20,10 @@ export const createChat = createAsyncThunk('chat/createChat', async payload => {
 	const response = await createChatAPI(payload)
 	return response
 })
+export const createGeneralChat = createAsyncThunk('chat/createGeneralChat', async payload => {
+	const response = await createPublicChatAPI(payload)
+	return response
+})
 export const joinPublicChat = createAsyncThunk(
 	'chat/joinPublicChat',
 	async chatId => {
@@ -28,7 +33,7 @@ export const joinPublicChat = createAsyncThunk(
 )
 export const joinPrivateChat = createAsyncThunk(
 	'chat/joinPrivateChat',
-	async (chatId, password) => {
+	async ({ chatId, password }) => {
 		const response = await joinPrivateChatAPI(chatId, password)
 		return response
 	}
@@ -74,6 +79,17 @@ const chatSlice = createSlice({
 				state.status = 'loading'
 			})
 			.addCase(createChat.rejected, (state, action) => {
+				state.status = 'failed'
+				state.error = action.error.message
+			})
+			.addCase(createGeneralChat.fulfilled, (state, action) => {
+				state.chats.push(action.payload)
+				state.status = 'succeeded'
+			})
+			.addCase(createGeneralChat.pending, state => {
+				state.status = 'loading'
+			})
+			.addCase(createGeneralChat.rejected, (state, action) => {
 				state.status = 'failed'
 				state.error = action.error.message
 			})

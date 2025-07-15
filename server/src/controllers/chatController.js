@@ -103,10 +103,9 @@ export const joinPrivateChat = async (req, res, next) => {
 		}
 
 		const isMatch = await chat.correctPassword(password, chat.password)
-
 		if (!isMatch) {
 			res.status(401)
-			throw new Error('Неверный пароль')
+			throw new Error('Неверный блин пароль')
 		}
 
 		if (!chat.members.includes(userId)) {
@@ -139,6 +138,16 @@ export const getChatMessages = async (req, res, next) => {
 		const messages = await Message.find({ chat: chatId })
 
 		res.status(200).json(messages)
+	} catch (err) {
+		next(err)
+	}
+}
+
+export const getChatById = async (req, res, next) => {
+	try {
+		const chat = await Chat.findById(req.params.id)
+		if (!chat) throw new Error('Чат не найден')
+		res.status(200).json(chat)
 	} catch (err) {
 		next(err)
 	}
