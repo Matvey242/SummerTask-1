@@ -9,7 +9,8 @@ const chatSchema = mongoose.Schema(
 			trim: true,
 			minlength: 2,
 			maxlength: 50,
-			default: 'New Chat'
+			default: 'New Chat',
+			unique: true
 		},
 		privacy: {
 			type: String,

@@ -107,40 +107,29 @@ const ChatPage = () => {
 	}
 
 	return (
-		<div>
-			<h2>Чат</h2>
-
-			<div
-				style={{
-					maxHeight: 300,
-					width: 400,
-					overflowY: 'auto',
-					border: '1px solid #ccc',
-					padding: 8,
-					marginBottom: 10,
-				}}
-			>
-				{log.map((entry, idx) => (
-					<div key={idx} style={{ color: 'gray', fontStyle: 'italic' }}>
-						{entry}
-					</div>
-				))}
-
-				{messages.map(msg => (
-					<div key={msg._id} style={{ position: 'relative' }}>
-						<b>{msg.author?.username || msg.author}:</b> {msg.text} <span className={styles['date']}>{new Date(msg.date).toLocaleDateString('ru-RU')}</span>
-					</div>
-				))}
-			</div>
-
-			<input
-				value={input}
-				onChange={e => setInput(e.target.value)}
-				onKeyDown={e => e.key === 'Enter' && sendMessage()}
-			/>
-			<button onClick={sendMessage}>Отправить</button>
-		</div>
-	)
+    <div className={styles['chatContainer']}>
+      <h2 className={styles['ChatH2']}>Чат</h2>
+      <div className={styles['chatBox']}>
+        {log.map((entry, idx) => (
+          <div key={idx} className={styles['log']}>{entry}</div>
+        ))}
+        {messages.map(msg => (
+          <div key={msg._id} className={styles['message']}>
+            <b>{msg.author?.username || msg.author}:</b> {msg.text} <span className={styles['date']}>{new Date(msg.date).toLocaleDateString('ru-RU')}</span>
+          </div>
+        ))}
+      </div>
+      <div className={styles['inputContainer']}>
+        <input
+        value={input}
+        onChange={e => setInput(e.target.value)}
+        onKeyDown={e => e.key === 'Enter' && sendMessage()}
+        className={styles['inputField']}
+        />
+       <button className={styles['msgBtn']} onClick={sendMessage}>Отправить</button>
+      </div>
+    </div>
+  )
 }
 
 export default ChatPage

@@ -6,6 +6,10 @@ export const createChat = async (req, res, next) => {
 	try {
 		const { title, privacy, password, members } = req.body
 
+		if (!members || members.length < 2) {
+			throw new Error('Для создания чата необходимо указать минимум 2 участника')
+		}
+
 		if (privacy === 'private' && !password) {
 			throw new Error('Для создания приватного чата необходимо указать пароль')
 		}
@@ -19,28 +23,45 @@ export const createChat = async (req, res, next) => {
 	}
 }
 
-export const createPublicChat = async (req, res, next) => {
+export const createGroupChat = async (req, res, next) => {
 	try {
-		const { title, privacy, password } = req.body
+		const { title, privacy, password, members } = req.body
 
 		if (privacy === 'private' && !password) {
 			throw new Error('Для создания приватного чата необходимо указать пароль')
 		}
 
-		const chat = await Chat.create({ title, privacy, password })
-		await User.findByIdAndUpdate(
-            req.user._id,
-            { $push: { chats: chat._id } }
-        )
-        await Chat.findByIdAndUpdate(
-            chat._id,
-            { $push: { members: req.user._id } }
-        )
+		const existingChat = await Chat.findOne({
+			title,
+			members: { $all: members }
+		})
+
+		if (existingChat) {
+			res.status(401)
+			throw new Error('Чат с таким названием уже существует')
+		}
+
+		const chat = await Chat.create({ title, privacy, password, members })
+		await User.updateMany({ _id: { $in: members } }, { $push: { chats: chat._id } })
 
 		res.status(201).json(chat)
 	} catch (err) {
 		next(err)
 	}
+}
+
+export const getAllChats = async (req, res, next) => {
+  try {
+    const chats = await Chat.find({})
+
+    if (!chats || chats.length === 0) {
+      throw new Error('Чаты не найдены')
+    }
+
+    res.status(200).json(chats)
+  } catch (err) {
+    next(err)
+  }
 }
 
 export const getMyChats = async (req, res, next) => {
@@ -51,13 +72,13 @@ export const getMyChats = async (req, res, next) => {
 		if (!chats) {
 			throw new Error('Чаты не найдены')
 		}
-
-		//? Подумать, что передавать
+		
 		res.status(200).json(chats)
 	} catch (err) {
 		next(err)
 	}
 }
+
 
 export const joinPublicChat = async (req, res, next) => {
 	try {

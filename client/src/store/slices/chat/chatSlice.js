@@ -1,8 +1,9 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import {
 	createChatAPI,
-	createPublicChatAPI,
+	createGroupChatAPI,
 	fetchChatsAPI,
+	fetchMyChatsAPI,
 	fetchMessagesAPI,
 	joinPrivateChatAPI,
 	joinPublicChatAPI
@@ -10,6 +11,10 @@ import {
 
 export const fetchChats = createAsyncThunk('chat/fetchChats', async () => {
 	const response = await fetchChatsAPI()
+	return response
+})
+export const fetchMyChats = createAsyncThunk('chat/fetchMyChats', async () => {
+	const response = await fetchMyChatsAPI()
 	return response
 })
 export const fetchMessages = createAsyncThunk('chat/fetchMessages', async chatId => {
@@ -20,10 +25,13 @@ export const createChat = createAsyncThunk('chat/createChat', async payload => {
 	const response = await createChatAPI(payload)
 	return response
 })
-export const createGeneralChat = createAsyncThunk('chat/createGeneralChat', async payload => {
-	const response = await createPublicChatAPI(payload)
-	return response
-})
+export const createGroupChat = createAsyncThunk(
+	'chat/createGroupChat',
+	async payload => {
+		const response = await createGroupChatAPI(payload)
+		return response
+	}
+)
 export const joinPublicChat = createAsyncThunk(
 	'chat/joinPublicChat',
 	async chatId => {
@@ -68,6 +76,13 @@ const chatSlice = createSlice({
 				state.messages = action.payload
 				state.status = 'succeeded'
 			})
+			.addCase(fetchMyChats.pending, state => {
+				state.status = 'loading'
+			})
+			.addCase(fetchMyChats.fulfilled, (state, action) => {
+				state.chats = action.payload
+				state.status = 'succeeded'
+			})
 			.addCase(fetchMessages.pending, state => {
 				state.status = 'loading'
 			})
@@ -82,14 +97,14 @@ const chatSlice = createSlice({
 				state.status = 'failed'
 				state.error = action.error.message
 			})
-			.addCase(createGeneralChat.fulfilled, (state, action) => {
+			.addCase(createGroupChat.fulfilled, (state, action) => {
 				state.chats.push(action.payload)
 				state.status = 'succeeded'
 			})
-			.addCase(createGeneralChat.pending, state => {
+			.addCase(createGroupChat.pending, state => {
 				state.status = 'loading'
 			})
-			.addCase(createGeneralChat.rejected, (state, action) => {
+			.addCase(createGroupChat.rejected, (state, action) => {
 				state.status = 'failed'
 				state.error = action.error.message
 			})
