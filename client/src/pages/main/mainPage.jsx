@@ -4,7 +4,11 @@ import { Form, useNavigate } from 'react-router'
 import { createChat, joinPublicChat, fetchChats, createGroupChat, setCurrentChat, fetchMyChats } from '../../store/slices/chat/chatSlice'
 import { getAllUsers } from '../../store/slices/users/usersSlice'
 import styles from './mainPage.module.css'
-import { setPassword, setTitle } from '../auth/checks'
+import { setPassword, setTitle } from '../../utils/checks'
+import cn from 'classnames'
+import { useTheme } from '../../context/theme/useTheme'
+import { MdDarkMode, MdLightMode, MdOutlineExitToApp } from 'react-icons/md'
+import { TbDoorEnter } from "react-icons/tb"
 
 const HomePage = () => {
 	const dispatch = useDispatch()
@@ -12,6 +16,7 @@ const HomePage = () => {
 	const { user } = useSelector(state => state.auth)
 	const { users } = useSelector(state => state.users)
 	const { chats, currentChat } = useSelector(state => state.chat)
+	const { theme, toggleTheme } = useTheme()
 	const [chatList, setChatList] = useState(false)
 	const [allChats, setAllChats] = useState(false)
 	const [userList, setUserList] = useState(true)
@@ -20,6 +25,7 @@ const HomePage = () => {
 	const [chatPassword, setChatPassword] = useState()
 	const [selectedUsers, setSelectedUsers] = useState([])
 	const [btnActive, setBtnActive] = useState(false)
+
 
 	useEffect(() => {
 		const fetchUsers = async () => {
@@ -142,11 +148,12 @@ const joinChat = async () => {
 		setBtnActive(!btnActive)
 	}
 
-
+	const ThemeIcon = theme === 'light' ? MdDarkMode : MdLightMode
 
 	return (
 		<div className={styles["container"]}>
 				<div className={styles["BottomBlock1"]}>
+					<ThemeIcon onClick={toggleTheme} className={cn(styles['dropdown__icon'])} />
 					<div onClick={showUserList} className={`${styles["selUsers"]} ${userList === true ? styles.blue : ""}`}>Пользователи</div>
 					<div onClick={showChatList} className={`${styles["selChats"]} ${chatList === true ? styles.blue : ""}`}>Мои чаты</div>
 					<div onClick={showAllChatList} className={`${styles["selChats"]} ${allChats === true ? styles.blue : ""}`}>Все чаты</div>
@@ -167,7 +174,7 @@ const joinChat = async () => {
 					<ul className={styles['list']}>
 						{chats.map(pubChat => (
 							<li key={pubChat._id}>
-								<div onClick={() => dispatch(setCurrentChat(pubChat))} className={styles["ChatLi"]}>{pubChat.title}<button onClick={joinChat} className={styles['joinBtn']}></button></div>
+								<div onClick={() => dispatch(setCurrentChat(pubChat))} className={styles["ChatLi"]}>{pubChat.title}<TbDoorEnter onClick={joinChat} className={styles['joinBtn']} /></div>
 							</li>
 						))}
 					</ul>
@@ -177,7 +184,7 @@ const joinChat = async () => {
 					<ul className={styles['list']}>
 						{chats.map(pubChat => (
 							<li key={pubChat._id}>
-								<div onClick={() => dispatch(setCurrentChat(pubChat))} className={styles["ChatLi"]}>{pubChat.title}<button onClick={joinChat} className={styles['joinBtn']}></button></div>
+								<div onClick={() => dispatch(setCurrentChat(pubChat))} className={styles["ChatLi"]}>{pubChat.title}<TbDoorEnter onClick={joinChat} className={styles['joinBtn']} /></div>
 							</li>
 						))}
 					</ul>
@@ -208,7 +215,6 @@ const joinChat = async () => {
             })}
     </div>
 ) : ''}
-
 			</div>
 	)
 }

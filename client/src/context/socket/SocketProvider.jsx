@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { io } from 'socket.io-client'
-import { SERVER_URL } from '../store/config'
+import { SERVER_URL } from '../../store/config'
 import SocketContext from './socketContext'
 
 export const SocketProvider = ({ children }) => {

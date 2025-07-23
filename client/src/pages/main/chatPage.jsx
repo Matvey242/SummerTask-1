@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router'
-import { useSocket } from '../../context/useSocket.js'
+import { useSocket } from '../../context/socket/useSocket.js'
 import {
 	addMessage,
 	fetchMessages,
@@ -115,7 +115,7 @@ const ChatPage = () => {
         ))}
         {messages.map(msg => (
           <div key={msg._id} className={styles['message']}>
-            <b>{msg.author?.username || msg.author}:</b> {msg.text} <span className={styles['date']}>{new Date(msg.date).toLocaleDateString('ru-RU')}</span>
+            <b className={styles['author']}>{msg.author?.username || msg.author}: {msg.text}</b>  <span className={styles['date']}>{new Date(msg.date).toLocaleDateString('ru-RU')}</span>
           </div>
         ))}
       </div>

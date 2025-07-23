@@ -7,7 +7,7 @@ import {
     OnChangeEmail,
     OnChangePassword,
     OnChangeRepPassword,
-} from './checks.js'
+} from '../../utils/checks.js'
 import { useDispatch } from "react-redux"
 import { registerUser } from "../../store/slices/auth/authSlice.js"
 

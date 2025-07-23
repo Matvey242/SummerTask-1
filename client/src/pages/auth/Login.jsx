@@ -5,7 +5,7 @@ import { NavLink } from "react-router"
 import {
     OnChangeLogName,
     OnChangeLogPassword
-} from './checks.js'
+} from '../../utils/checks.js'
 import { useDispatch } from "react-redux"
 import { loginUser } from "../../store/slices/auth/authSlice.js"
 
