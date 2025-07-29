@@ -173,3 +173,36 @@ export const getChatById = async (req, res, next) => {
 		next(err)
 	}
 }
+
+export const getAllMembers = async (req, res, next) => {
+	try {
+        const chat = await Chat.findById(req.params.id)
+		const members = await User.find({ _id: { $in: chat.members } }).select('_id username email')
+
+		res.json(members)
+	} catch (err) {
+		next(err)
+	}
+}
+
+
+export const exitChat = async (req, res, next) => {
+    try {
+        const userId = req.user._id
+        const chatId = req.params.id
+
+        await Chat.findByIdAndUpdate(
+            chatId,
+            { $pull: { members: userId } }
+        )
+
+        await User.findByIdAndUpdate(
+            userId,
+            { $pull: { chats: chatId } }
+        )
+
+        res.status(200).json({ message: 'Вы успешно вышли из чата' })
+    } catch (err) {
+        next(err)
+    }
+}

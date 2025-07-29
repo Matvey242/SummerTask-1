@@ -31,3 +31,13 @@ export const getChatByIdAPI = async chatId => {
 	const res = await axios.get(`${CHAT_URL}/${chatId}`, config)
 	return res.data
 }
+
+export const getAllMembersAPI = async chatId => {
+	const res = await axios.get(`${CHAT_URL}/${chatId}/members`, config)
+	return res.data
+}
+
+export const exitChatAPI = async chatId => {
+	const res = await axios.get(`${CHAT_URL}/${chatId}/exit`, config)
+	return res.data
+}

@@ -7,8 +7,11 @@ import styles from './mainPage.module.css'
 import { setPassword, setTitle } from '../../utils/checks'
 import cn from 'classnames'
 import { useTheme } from '../../context/theme/useTheme'
-import { MdDarkMode, MdLightMode, MdOutlineExitToApp } from 'react-icons/md'
+import { IoIosSettings } from 'react-icons/io'
+import { MdDarkMode, MdLightMode, } from 'react-icons/md'
 import { TbDoorEnter } from "react-icons/tb"
+import { GiExitDoor } from "react-icons/gi"
+import { logout } from '../../store/slices/auth/authSlice'
 
 const HomePage = () => {
 	const dispatch = useDispatch()
@@ -25,6 +28,7 @@ const HomePage = () => {
 	const [chatPassword, setChatPassword] = useState()
 	const [selectedUsers, setSelectedUsers] = useState([])
 	const [btnActive, setBtnActive] = useState(false)
+	const [isSettingsDropDownOpen, setIsSettingsDropDownOpen] = useState(false)
 
 
 	useEffect(() => {
@@ -148,12 +152,41 @@ const joinChat = async () => {
 		setBtnActive(!btnActive)
 	}
 
+    const handleToggleSettingsDropdown = () => setIsSettingsDropDownOpen(prev => !prev)
+
+	const settingsContainerClasses = cn(styles['settings-container'], {
+		[styles.active]: isSettingsDropDownOpen
+	})
+	const settingsDropdownClasses = cn(styles['dropdown'], {
+		[styles['is-open']]: isSettingsDropDownOpen
+	})
 	const ThemeIcon = theme === 'light' ? MdDarkMode : MdLightMode
+	const hlogout = () => dispatch(logout())
+	
 
 	return (
 		<div className={styles["container"]}>
+			<div className={styles["TopBlock"]}>
+				<div className={styles["TopBlock1"]}>
+					<div className={styles['profileIcon']}></div>
+					<span className={styles['username']}>{user.username}</span>
+				</div>
+				<div className={styles["TopBlock2"]}>
+			<div className={settingsContainerClasses} onClick={handleToggleSettingsDropdown}>
+				<IoIosSettings className={cn(styles['settings-icon'])} />
+				<ul className={cn(settingsDropdownClasses, styles['settings-dropdown'])}>
+					<li onClick={toggleTheme}>
+						<ThemeIcon className={styles['dropdown__icon']} />
+					</li>
+					<li onClick={hlogout}>
+						<GiExitDoor className={styles['dropdown__icon']} />
+					</li>
+				</ul>
+			</div>
+				</div>
+			</div>
+			<div className={styles["BottomBlock"]}>
 				<div className={styles["BottomBlock1"]}>
-					<ThemeIcon onClick={toggleTheme} className={cn(styles['dropdown__icon'])} />
 					<div onClick={showUserList} className={`${styles["selUsers"]} ${userList === true ? styles.blue : ""}`}>Пользователи</div>
 					<div onClick={showChatList} className={`${styles["selChats"]} ${chatList === true ? styles.blue : ""}`}>Мои чаты</div>
 					<div onClick={showAllChatList} className={`${styles["selChats"]} ${allChats === true ? styles.blue : ""}`}>Все чаты</div>
@@ -202,7 +235,7 @@ const joinChat = async () => {
                 {btnActive ? (
                     <div className={styles["activeBlock"]}>
                         {users.map(u => {
-                            const isSelected = selectedUsers.includes(u._id);
+                            const isSelected = selectedUsers.includes(u._id)
 				            return (
                                 <div key={u._id}>
                                     <label 
@@ -215,6 +248,7 @@ const joinChat = async () => {
             })}
     </div>
 ) : ''}
+</div>
 			</div>
 	)
 }

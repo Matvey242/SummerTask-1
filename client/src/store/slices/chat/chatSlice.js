@@ -6,12 +6,23 @@ import {
 	fetchMyChatsAPI,
 	fetchMessagesAPI,
 	joinPrivateChatAPI,
-	joinPublicChatAPI
+	joinPublicChatAPI,
+	getAllMembersAPI,
+	exitChatAPI
 } from './chatAPI'
 
+
+export const exitChat = createAsyncThunk('chat/exitChat', async (chatId) => {
+	const response = await exitChatAPI(chatId)
+	return response
+})
 export const fetchChats = createAsyncThunk('chat/fetchChats', async () => {
 	const response = await fetchChatsAPI()
 	return response
+})
+export const getAllMembers = createAsyncThunk('chat/getAllMembers', async (chatId) => {
+    const response = await getAllMembersAPI(chatId)
+    return response
 })
 export const fetchMyChats = createAsyncThunk('chat/fetchMyChats', async () => {
 	const response = await fetchMyChatsAPI()
@@ -53,6 +64,7 @@ const chatSlice = createSlice({
 		chats: [],
 		currentChat: null,
 		messages: [],
+		currentChatMembers: [],
 		status: 'idle'
 	},
 	reducers: {
@@ -72,6 +84,21 @@ const chatSlice = createSlice({
 				state.chats = action.payload
 				state.status = 'succeeded'
 			})
+			.addCase(exitChat.fulfilled, state => {
+				state.currentChat = null
+				state.status = 'succeeded'
+			})
+			.addCase(exitChat.pending, state => {
+				state.status = 'loading'
+			})
+			.addCase(exitChat.rejected, (state, action) => {
+				state.status = 'failed'
+				state.error = action.error.message
+			})
+			.addCase(getAllMembers.fulfilled, (state, action) => {
+                state.currentChatMembers = action.payload
+                state.status = 'succeeded'
+            })
 			.addCase(fetchMessages.fulfilled, (state, action) => {
 				state.messages = action.payload
 				state.status = 'succeeded'

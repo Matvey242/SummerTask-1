@@ -6,6 +6,7 @@
 :root {
 	/* цвета */
 	--text-color: #000000;
+	--selected-color: rgb(71, 94, 100);
 	--primary-color: #ffffff;
 	--green-color: #00a48a;
 	--lightgreen-color: #c1e9e2;
@@ -19,6 +20,7 @@
 	--red-color: #ff7a7a;
 	--button-color: #ffffff;
 	--hover-color: rgb(225, 237, 255);
+	--top-color: rgb(46, 154, 184);
 	/* шрифты */
 	--primary-font: 'MADE Likes Slab';
 	/* размеры шрифта */
@@ -65,6 +67,7 @@ body,
 
 body.dark {
 	--text-color: #ffffff;
+	--selected-color: rgb(99, 137, 146);
 	--primary-color: #1a1a2e;
 	--green-color: #00a48a;
 	--lightgreen-color: #005a4e;
@@ -78,6 +81,7 @@ body.dark {
 	--button-color: #474c52;
 	--red-color: hsl(0, 69%, 50%);
 	--hover-color: rgb(94, 131, 185);
+	--top-color: rgb(31, 51, 67);
 }
 
 body {

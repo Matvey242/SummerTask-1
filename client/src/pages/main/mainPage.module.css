@@ -13,9 +13,69 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-direction: row;
+    flex-direction: column;
     background: var(--primary-color);
     box-shadow: var(--main-box-shadow);
+}
+
+.TopBlock {
+    width: 100%;
+    height: 15%;
+    border-bottom: 3px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.TopBlock1 {
+    width: 55%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    gap: 20px;
+}
+
+.TopBlock2 {
+    width: 40%;
+    height: 100%;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    gap: 20px;
+}
+
+.username {
+    font-size: var(--font-size-xl);
+    color: var(--text-color);
+}
+
+.profileIcon {
+    width: 65px;
+    height: 65px;
+    color: var(--text-color);
+    background: url(data:image/jpeg;base64,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);
+    border-radius: 50%;
+    border: 2px solid var(--text-color);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    cursor: pointer;
+}
+
+.exit {
+    font-size: var(--font-size-xl);
+    color: var(--text-color);
+    cursor: pointer;
+}
+
+.BottomBlock {
+    width: 100%;
+    height: 85%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
 }
 
 .BottomBlock1 {
@@ -198,10 +258,54 @@
   width: 100vw;
 }
 
+.titleBlock {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 8%;
+    background: var(--top-color);
+}
+
+.titleBlock1 {
+    width: 32%;
+    height: 100%;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+}
+
+.titleBlock2 {
+    width: 33%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.titleBlock3 {
+    width: 32%;
+    height: 100%;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+}
+
 .ChatH2 {
     padding: 10px;
-    background-color: var(--border-color);
     color: var(--text-color);
+}
+
+.arrowLeft {
+    color: var(--text-color);
+    font-size: var(--font-size-xl);
+    cursor: pointer;
+}
+
+.svgList {
+    color: var(--text-color);
+    font-size: var(--font-size-xl);
+    cursor: pointer;
 }
 
 .chatBox {
@@ -227,6 +331,76 @@
     color: var(--text-color);
 }
 
+.member {
+    width: 275px;
+    height: 60px;
+    color: var(--text-color);
+    background: var(--primary-color);
+    font-size: 28px;
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.listContainer {
+    position: absolute;
+    width: 25%;
+    height: 100%;
+    background: var(--my-message-bg-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    visibility: hidden;
+    border-right: 3px solid var(--border-color);
+    transition: all 0.2s ease-in-out;
+    opacity: 0;
+    transform: translateX(-10px);
+}
+
+.listContainer.active {
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(0);
+}
+
+
+.ExitDoorBlock {
+    width: 100%;
+    height: 10%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.leaveChat {
+    font-size: var(--font-size-logo);
+    cursor: pointer;
+    color: var(--text-color);
+}
+
+.chatUsersList {
+    display: flex;
+    width: 100%;
+    height: 80%;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+    list-style: none;
+    border-top: 3px solid var(--border-color);
+    border-bottom: 3px solid var(--border-color);
+    padding: 20px;
+    overflow: auto;
+}
+
+
+.h1 {
+    color: var(--text-color);
+    margin-top: 10px;
+}
+
 .inputField {
   width: 100%;
   height: 50px;
@@ -248,15 +422,16 @@
 }
 
 .dropdown__icon {
-	font-size: var(--font-size-l);
+	font-size: var(--font-size-xl);
 	color: var(--text-color);
 	padding: var(--offset-xxs);
-    border: 2px solid black;
     cursor: pointer;
+    rotate: 180deg;
+    margin-top: 5px;
 }
 
 .UserLi.selected {
-    background-color: rgb(71, 94, 100);
+    background-color: var(--selected-color);
 }
 
 .checkbox {
@@ -269,4 +444,58 @@
 
 .blue {
     background: var(--blue-color);
+}
+
+.settings-container {
+	display: flex;
+    align-items: center;
+    justify-content: center;
+	cursor: pointer;
+    rotate: 180deg;
+}
+
+.settings-icon {
+	font-size: var(--font-size-xl);
+	color: var(--input-text-light-color);
+	transition: all 0.2s ease-in-out;
+    rotate: 180deg;
+}
+
+.settings-container:hover .settings-icon {
+	color: var(--text-color);
+}
+
+.settings-container.active .settings-icon {
+	transform: rotate(90deg);
+	color: var(--text-color);
+}
+
+.dropdown {
+	display: flex;
+	flex-direction: row;
+    justify-content: center;
+    align-items: center;
+	background: var(--input-color);
+	border-radius: var(--border-radius-s);
+	opacity: 0;
+	visibility: hidden;
+	transform: translateX(-10px);
+	transition: all 0.2s ease-in-out;
+	box-shadow: var(--input-box-shadow);
+	z-index: 10;
+	list-style: none;
+}
+
+.settings-dropdown {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    padding: 3px;
+}
+
+.dropdown.is-open {
+	opacity: 1;
+	visibility: visible;
+	transform: translateX(0);
 }

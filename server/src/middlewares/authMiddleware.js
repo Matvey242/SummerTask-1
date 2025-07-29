@@ -8,7 +8,7 @@ const JWT_SECRET = process.env.JWT_ACCESS_TOKEN_SECRET
 
 export const authMiddleware = async (req, res, next) => {
 	const token = req.cookies.accessToken
-
+    console.log('Токен:', token)
 	if (!token) {
 		return res.status(401).json({ message: 'Пользователь не авторизован' })
 	}

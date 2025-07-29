@@ -5,8 +5,10 @@
     font-size: 35px;
     padding: 10px;
     border-radius: 8px;
-    border: 1px solid black;
+    border: 1px solid var(--border-color);
     transition: all 0.2s;
+    color: var(--text-color);
+    background: var(--input-color);
 }
 
 .AuthInput:focus {

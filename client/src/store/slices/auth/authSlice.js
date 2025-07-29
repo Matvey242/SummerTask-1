@@ -3,29 +3,33 @@ import { loginUserAPI, registerUserAPI, checkAuthAPI } from './authAPI'
 const ValidEmail = (email) => /^[^\s()<>@,;:\/]+@\w[\w\.-]+\.[a-z]{2,}$/i.test(email)
 
 export const loginUser = createAsyncThunk(
-	'auth/login',
-	async ({ username, password }) => {
-    if (password.length < 6) {
-      alert('Пароль должен содержать не менее 6 символов')
-      return
-    }
-    if (username.length < 3) {
-      alert('Имя должно содержать не менее 3 символов')
-      return
-    } 
-		try {
+  'auth/login',
+  async ({ username, password }) => {
+    try {
+      if (password.length < 6) {
+        alert('Пароль должен содержать не менее 6 символов')
+        return
+      }
+      if (username.length < 3) {
+        alert('Имя должно содержать не менее 3 символов')
+        return
+      } 
+      const res = await loginUserAPI(username, password)
       alert('Вы вошли в аккаунт')
-      return await loginUserAPI(username, password)
-    } catch (error) {
+      return res
+    } catch (err) {
+      alert('Ошибка при логине')
       return res.json({ message: `Ошибка при логине на клиенте: ${err.message} `})
     }
-	}
+  }
 )
+
 
 
 export const registerUser = createAsyncThunk(
   'auth/register',
   async ({ username, email, password }) => {
+	try {
     if (password.length < 6) {
       alert('Пароль должен содержать не менее 6 символов')
       return
@@ -38,11 +42,11 @@ export const registerUser = createAsyncThunk(
       alert('Введите корректную почту')
       return
     }
-
-    try {
-      alert('Вы зарегистрировались')
-      return await registerUserAPI(username, email, password)
-    } catch (error) {
+      const res = await registerUserAPI(username, email, password)
+	  alert('Вы зарегистрировались')
+	  return res
+    } catch (err) {
+	  alert('Ошибка при регистрации')
       return res.json({ message: `Ошибка при регистрации на клиенте: ${err.message} `})
     }
   }
@@ -63,7 +67,6 @@ const authSlice = createSlice({
 		logout: state => {
 			state.user = null
 		},
-		// ?
 		setUser: (state, action) => {
 			state.user = action.payload
 		}

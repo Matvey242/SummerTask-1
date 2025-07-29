@@ -99,12 +99,3 @@ export const checkAuth = async (req, res, next) => {
 	}
 }
 
-export const logout = (req, res) => {
-  try {
-    res.clearCookie('refreshToken')
-    res.clearCookie('accessToken')
-    return res.status(200).json({ message: 'Вы вышли из аккаунта' })
-  } catch (err) {
-    return res.status(500).json({ message: `Ошибка при выходе из аккаунта: ${err}` })
-  }
-}
